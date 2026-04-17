@@ -1,33 +1,61 @@
+# 🚀 Profile API
+
+A RESTful API that generates user profiles from a name using multiple external APIs, applies classification logic, stores results in MongoDB, and exposes endpoints to manage and query the data.
+
+---
+
 ## 🌐 Live API
 
 https://profile-api-production-da51.up.railway.app
 
-# Profile API 🚀
+---
 
-A RESTful API that generates user profiles from a name by integrating
-multiple external APIs, applying classification logic, storing results
-in MongoDB, and exposing endpoints to manage the data.
+## 🛠 Tech Stack
 
-## Setup & Run Locally
+- Python (Flask)
+- MongoDB (PyMongo)
+- Requests
+- Gunicorn
 
-1.  Clone repo git clone
-    https://github.com/BakoJoseph/profile-api.git cd profile-api
+---
 
-2.  Create virtual env python -m venv .venv
+## ⚙️ Run Locally
 
-Activate: Windows: .venv`\Scripts`{=tex}`\activate`{=tex} Mac/Linux:
+### 1. Clone the repo
+git clone https://github.com/BakoJoseph/profile-api.git
+cd profile-api
+
+### 2. Create virtual environment
+python -m venv .venv
+
+Activate:
+Windows:
+.venv\Scripts\activate
+
+Mac/Linux:
 source .venv/bin/activate
 
-3.  Install dependencies pip install -r requirements.txt
+---
 
-4.  Create .env MONGO_URI=your_mongodb_connection_string PORT=5000
+### 3. Install dependencies
+pip install -r requirements.txt
 
-5.  Run app python app.py
+---
 
-## Endpoints
+### 4. Create .env
+MONGO_URI=your_mongodb_connection_string
+PORT=5000
 
-### Create Profile
+---
 
+### 5. Run app
+python app.py
+
+---
+
+## 📡 API Endpoints
+
+### ✅ Create Profile
 POST /api/profiles
 
 Body:
@@ -35,34 +63,97 @@ Body:
   "name": "john"
 }
 
+---
+
+### 🔁 Idempotency
+If name exists:
+{
+  "status": "success",
+  "message": "Profile already exists",
+  "data": { ... }
+}
+
+---
+
+### ✅ Get All Profiles
 GET /api/profiles
-GET /api/profiles/{id} 
-DELETE /api/profiles/{id}
 
-### Filtering Examples
+---
 
+### 🔍 Filtering (Case-Insensitive)
 GET /api/profiles?gender=male  
 GET /api/profiles?age_group=adult  
 GET /api/profiles?country_id=NG  
 
-## Edge Cases
+---
 
-- Duplicate names return existing profile
-- No matching filter returns empty array
-- External API failure returns 502
+### ✅ Get Single Profile
+GET /api/profiles/{id}
 
-## Deployment
+---
 
-Deployed on Railway using Gunicorn:
+### ✅ Delete Profile
+DELETE /api/profiles/{id}
 
-gunicorn -w 4 -b 0.0.0.0:$PORT app:app
+Returns:
+204 No Content
 
-## CORS
+---
+
+## 🧠 Classification Logic
+
+Age Groups:
+0–12 → child  
+13–19 → teenager  
+20–59 → adult  
+60+ → senior  
+
+---
+
+## ⚠️ Error Handling
+
+{
+  "status": "error",
+  "message": "Error message"
+}
+
+Codes:
+400 → Missing name  
+404 → Not found  
+502 → External API failure  
+
+---
+
+## 🚨 Edge Cases
+
+- Duplicate names return existing profile  
+- No matching filter returns empty array  
+- External API failure returns 502  
+
+---
+
+## 🔐 CORS
 
 Access-Control-Allow-Origin: *
 
-## Notes
+---
 
--   Case-insensitive filtering
--   Returns empty array if no data
--   Uses MongoDB
+## 🚀 Deployment
+
+gunicorn -w 4 -b 0.0.0.0:$PORT app:app
+
+---
+
+## 📦 Requirements
+
+Flask  
+pymongo  
+requests  
+gunicorn  
+python-dotenv  
+
+---
+
+## 👨‍💻 Author
+
+Bako Olamide
