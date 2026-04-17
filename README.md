@@ -1,6 +1,6 @@
 ## 🌐 Live API
 
-https://your-app.up.railway.app
+profile-api-production-da51.up.railway.app
 
 # Profile API 🚀
 
@@ -11,7 +11,7 @@ in MongoDB, and exposing endpoints to manage the data.
 ## Setup & Run Locally
 
 1.  Clone repo git clone
-    https://github.com/your-username/profile-api.git cd profile-api
+    https://github.com/BakoJoseph/profile-api.git cd profile-api
 
 2.  Create virtual env python -m venv .venv
 
