@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from pymongo import MongoClient
 import requests
-import uuid
+import uuid6
 from datetime import datetime
 import os
 
@@ -101,7 +101,7 @@ def create_profile():
         best_country = max(n["country"], key=lambda x: x["probability"])
 
         profile = {
-            "id": str(uuid.uuid4()),
+            "id": str(uuid6.uuid7()),
             "name": name,
             "gender": g["gender"].lower(),
             "gender_probability": g["probability"],
