@@ -10,7 +10,7 @@ endpoints to manage profiles.
 
 ## 🌐 Base URL
 
-https://your-app.up.railway.app
+https://profile-api-production-da51.up.railway.app
 
 ------------------------------------------------------------------------
 
