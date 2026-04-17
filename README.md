@@ -1,80 +1,68 @@
-# 🚀 Profile API 
+## 🌐 Live API
 
-## 📌 Overview
+https://your-app.up.railway.app
 
-This API accepts a name, calls external APIs (**Genderize, Agify,
-Nationalize**), processes the data, stores it in MongoDB, and exposes
-endpoints to manage profiles.
+# Profile API 🚀
 
-------------------------------------------------------------------------
+A RESTful API that generates user profiles from a name by integrating
+multiple external APIs, applying classification logic, storing results
+in MongoDB, and exposing endpoints to manage the data.
 
-## 🌐 Base URL
+## Setup & Run Locally
 
-https://profile-api-production-da51.up.railway.app
+1.  Clone repo git clone
+    https://github.com/your-username/profile-api.git cd profile-api
 
-------------------------------------------------------------------------
+2.  Create virtual env python -m venv .venv
 
-## 📡 Endpoints
+Activate: Windows: .venv`\Scripts`{=tex}`\activate`{=tex} Mac/Linux:
+source .venv/bin/activate
 
-### 1️⃣ Create Profile
+3.  Install dependencies pip install -r requirements.txt
+
+4.  Create .env MONGO_URI=your_mongodb_connection_string PORT=5000
+
+5.  Run app python app.py
+
+## Endpoints
+
+### Create Profile
 
 POST /api/profiles
 
-Request: { "name": "ella" }
-
-Response (201): { "status": "success", "data": { "id": "uuid", "name":
-"ella", "gender": "female", "gender_probability": 0.99, "sample_size":
-1234, "age": 46, "age_group": "adult", "country_id": "US",
-"country_probability": 0.85, "created_at": "2026-04-01T12:00:00Z" } }
-
-------------------------------------------------------------------------
-
-### 2️⃣ Get Single Profile
-
-GET /api/profiles/{id}
-
-------------------------------------------------------------------------
-
-### 3️⃣ Get All Profiles
+Body:
+{
+  "name": "john"
+}
 
 GET /api/profiles
-
-Query params: - gender - country_id - age_group
-
-------------------------------------------------------------------------
-
-### 4️⃣ Delete Profile
-
+GET /api/profiles/{id} 
 DELETE /api/profiles/{id}
 
-------------------------------------------------------------------------
+### Filtering Examples
 
-## ⚙️ Tech Stack
+GET /api/profiles?gender=male  
+GET /api/profiles?age_group=adult  
+GET /api/profiles?country_id=NG  
 
--   Python (Flask)
--   MongoDB
--   PyMongo
--   Requests
+## Edge Cases
 
-------------------------------------------------------------------------
+- Duplicate names return existing profile
+- No matching filter returns empty array
+- External API failure returns 502
 
-## 🛠️ Setup
+## Deployment
 
-python -m venv .venv source .venv/Scripts/activate pip install -r
-requirements.txt
+Deployed on Railway using Gunicorn:
 
-Create .env: MONGO_URI=your_mongodb_uri
+gunicorn -w 4 -b 0.0.0.0:$PORT app:app
 
-Run: python app.py
+## CORS
 
-------------------------------------------------------------------------
+Access-Control-Allow-Origin: *
 
-## 🚀 Deployment
+## Notes
 
-Railway
-
-------------------------------------------------------------------------
-
-## 👤 Author
-
-Bako Olamide Joseph
+-   Case-insensitive filtering
+-   Returns empty array if no data
+-   Uses MongoDB
