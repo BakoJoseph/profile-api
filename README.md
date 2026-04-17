@@ -1,6 +1,6 @@
 ## 🌐 Live API
 
-profile-api-production-da51.up.railway.app
+https://profile-api-production-da51.up.railway.app
 
 # Profile API 🚀
 
