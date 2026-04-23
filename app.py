@@ -11,7 +11,7 @@ app = Flask(__name__)
 MONGO_URI = os.getenv("MONGO_URI")
 client = MongoClient(MONGO_URI)
 db = client["profile_db"]
-collection = db["profiles"]
+collection = db["profiles_stage_1"]
 
 
 # ---------------------------
