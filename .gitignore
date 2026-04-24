@@ -23,3 +23,9 @@ Thumbs.db
 
 # Mac/Linux temp files
 *.swp
+
+# IDE files
+*.iml
+.idea/
+id_rsa
+id_rsa.pub
