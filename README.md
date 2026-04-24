@@ -1,159 +1,233 @@
-# 🚀 Profile API
+# 🚀 Insighta Labs - Backend Intelligence API
 
-A RESTful API that generates user profiles from a name using multiple external APIs, applies classification logic, stores results in MongoDB, and exposes endpoints to manage and query the data.
+## Live API 
+https://insighta-profile-api-production.up.railway.app
 
----
-
-## 🌐 Live API
-
-https://profile-api-production-da51.up.railway.app
+## 📌 Overview
+This project is a backend API built for Insighta Labs to manage demographic profile data.
+It supports filtering, sorting, pagination, and natural language queries.
 
 ---
 
 ## 🛠 Tech Stack
-
 - Python (Flask)
-- MongoDB (PyMongo)
-- Requests
-- Gunicorn
+- MongoDB Atlas
+- PyMongo
 
 ---
 
-## ⚙️ Run Locally
+## ⚙️ Setup Instructions
 
-### 1. Clone the repo
-git clone https://github.com/BakoJoseph/profile-api.git
-cd profile-api
+1. Clone the repo's branch
+```bash
+git clone https://github.com/BakoJoseph/profile-api.git/tree/profile-api-II
+cd your-repo
+```
 
-### 2. Create virtual environment
-python -m venv .venv
+2. Create virtual environment
+```bash
+python -m venv venv
+```
 
 Activate:
+
 Windows:
-.venv\Scripts\activate
+```bash 
+venv\Scripts\activate
+```
 
 Mac/Linux:
-source .venv/bin/activate
 
----
+```bash 
+source venv/bin/activate
+```
 
-### 3. Install dependencies
+3. Install dependencies
+```bash
 pip install -r requirements.txt
+```
 
----
-
-### 4. Create .env
+4. Create .env file
 MONGO_URI=your_mongodb_connection_string
-PORT=5000
+
+5. Run the server
+```bash
+python app.py
+```
+
+Server runs on:
+http://127.0.0.1:5000
 
 ---
 
-### 5. Run app
-python app.py
+## 🌱 Data Seeding
+
+Run:
+python seed.py
+
+- Seeds 2026 profiles
+- Prevents duplicates
 
 ---
 
 ## 📡 API Endpoints
 
-### ✅ Create Profile
+### Create Profile
+
+```bash
 POST /api/profiles
+```
 
-Body:
+Request:
+```JSON
 {
-  "name": "john"
+  "name": "emmanuel"
 }
+```
+Response:
+```JSON
+{
+  "_id": "69eadba112e61cf7028bfa9b",
+  "name": "emmanuel",
+  "age": 68,
+  "age_group": "senior",
+  "country_id": "NG",
+  "country_name": "Nigeria",
+  "country_probability": 0.6,
+  "created_at": "2026-04-24T02:55:32.802603Z",
+  "gender": "male",
+  "gender_probability": 0.66,
+  "id": "019dbd69-fbc2-767b-8fc9-bbd46effddaf"
+}
+```
 
 ---
 
-### 🔁 Idempotency
-If name exists:
-{
-  "status": "success",
-  "message": "Profile already exists",
-  "data": { ... }
-}
+### Get All Profiles
 
----
-
-### ✅ Get All Profiles
+```bash
 GET /api/profiles
+```
+QueryParameters:
+```bash
+gender
+age_group
+country_id
+min_age / max_age
+min_gender_probability
+min_country_probability
+sort_by = age | created_at | gender_probability
+order = asc | desc
+page=1
+limit=10
+```
+
+Example:
+```bash
+/api/profiles?gender=male&country_id=NG&min_age=25&sort_by=age&order=desc&page=1&limit=10
+```
 
 ---
 
-### 🔍 Filtering (Case-Insensitive)
-GET /api/profiles?gender=male  
-GET /api/profiles?age_group=adult  
-GET /api/profiles?country_id=NG  
+### Get Single Profile
+
+```bash
+GET /api/profiles/<id>
+```
 
 ---
 
-### ✅ Get Single Profile
-GET /api/profiles/{id}
+### Delete Profile
+
+```bash
+DELETE /api/profiles/<id>
+```
 
 ---
 
-### ✅ Delete Profile
-DELETE /api/profiles/{id}
+### Natural Language Search
 
-Returns:
-204 No Content
+```bash
+GET /api/profiles/search?q=
+```
 
----
-
-## 🧠 Classification Logic
-
-Age Groups:
-0–12 → child  
-13–19 → teenager  
-20–59 → adult  
-60+ → senior  
+Example:
+```bash
+/api/profiles/search?q=young males from nigeria
+```
 
 ---
 
-## ⚠️ Error Handling
+## 🧠 Natural Language Parsing
 
+This project uses rule-based parsing (no AI)
+
+Supported queries:
+
+Query
+---
+young males             gender=male + age 16–24  
+---
+females above 30        gender=female + age ≥ 30  
+---
+people from angola      country_id=AO  
+---
+adult males from kenya  gender=male + age_group=adult + country_id=KE  
+---
+male and female 
+teenagers above 17      age_group=teenager + age ≥ 17  
+
+---
+
+##  Parsing Logic
+
+- Uses regex for keyword detection
+- Supports plural words (male/males felame/females)
+- Detects both genders and igonres gender filter 
+- Merges age filters into a single objects
+- Maps country names to ISO codes
+
+Example Logic:
+
+```Python
+if "young" in q :
+  age_filter["$gte"] = 16
+  age_filter["$lte"] = 24
+
+if re.search(r"\bmale(s)?\b", q)
+  query["gender"] = "male"
+```
+
+## ⚠️ Limitations
+
+- Only predefined countries names supported
+- No fuzzy matching(exact keyword only)
+- Only simple keyword parsing
+- Cannot handle complex sentences
+
+---
+
+## ❌ Error Format
+
+```bash
 {
   "status": "error",
-  "message": "Error message"
+  "message": "error message"
 }
-
-Codes:
-400 → Missing name  
-404 → Not found  
-502 → External API failure  
+```
 
 ---
 
-## 🚨 Edge Cases
-
-- Duplicate names return existing profile  
-- No matching filter returns empty array  
-- External API failure returns 502  
-
----
-
-## 🔐 CORS
-
+## 🌍 CORS
+```http
 Access-Control-Allow-Origin: *
+```
 
 ---
 
-## 🚀 Deployment
+## 🏁 Notes
 
-gunicorn -w 4 -b 0.0.0.0:$PORT app:app
-
----
-
-## 📦 Requirements
-
-Flask  
-pymongo  
-requests  
-gunicorn  
-python-dotenv  
-
----
-
-## 👨‍💻 Author
-
-Bako Olamide
+- UUID v7 used for IDS
+- Timestamps are UTC ISO 8601 
+- Pagination Max limit = 50
+- No full-table scans (queries are filtered)
